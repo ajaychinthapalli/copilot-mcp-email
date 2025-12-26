@@ -22,13 +22,26 @@ const server = new Server(
 
 // Configure nodemailer transporter
 // Note: For production, use environment variables for credentials
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER || "",
-    pass: process.env.EMAIL_PASS || "",
-  },
-});
+function createTransporter() {
+  const emailUser = process.env.EMAIL_USER;
+  const emailPass = process.env.EMAIL_PASS;
+
+  if (!emailUser || !emailPass) {
+    console.error(
+      "Warning: EMAIL_USER and EMAIL_PASS environment variables not set. Email sending will fail."
+    );
+  }
+
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: emailUser || "",
+      pass: emailPass || "",
+    },
+  });
+}
+
+const transporter = createTransporter();
 
 // List available tools
 server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -69,9 +82,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       body: string;
     };
 
+    // Validate email credentials are configured
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "Failed to send email: EMAIL_USER and EMAIL_PASS environment variables must be set. Please configure your email credentials in the .env file.",
+          },
+        ],
+        isError: true,
+      };
+    }
+
     try {
       const info = await transporter.sendMail({
-        from: process.env.EMAIL_USER || "",
+        from: process.env.EMAIL_USER,
         to,
         subject,
         text: body,

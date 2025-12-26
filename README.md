@@ -31,6 +31,15 @@ npm run build
 
 ## Usage
 
+### Verify Installation
+
+To verify the MCP server is properly configured:
+```bash
+npm run verify
+```
+
+This will display the sendEmail tool configuration and usage instructions.
+
 ### As an MCP Server
 
 Run the server:
