@@ -10,11 +10,15 @@
     "send-test": "node dist/send-test.js",
     "verify": "node dist/verify.js"
   },
-  "keywords": ["mcp", "email"],
+  "keywords": [
+    "mcp",
+    "email"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.1",
+    "dotenv": "^17.2.3",
     "nodemailer": "^7.0.12"
   },
   "devDependencies": {
